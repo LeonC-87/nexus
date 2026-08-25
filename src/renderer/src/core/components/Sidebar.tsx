@@ -33,15 +33,19 @@ export default function Sidebar({
         <span className="text-sm font-semibold tracking-wide text-text-primary">NEXUS</span>
       </div>
 
-      {updateStatus?.updateAvailable && (
-        <Link
-          to="/settings"
-          className="mb-5 px-2 text-xs text-emerald hover:underline"
-        >
-          Update available: v{updateStatus.latestVersion}
-        </Link>
-      )}
-      {!updateStatus?.updateAvailable && <div className="mb-6" />}
+      <div className="mb-5 px-2">
+        {updateStatus?.updateAvailable ? (
+          <Link to="/settings" className="text-xs text-emerald hover:underline">
+            Update available: v{updateStatus.latestVersion}
+          </Link>
+        ) : updateStatus?.checked && !updateStatus.error ? (
+          <span className="text-xs text-text-muted">
+            Up to date &middot; v{updateStatus.currentVersion}
+          </span>
+        ) : (
+          <span className="text-xs text-text-muted opacity-0">placeholder</span>
+        )}
+      </div>
 
       <nav className="flex flex-col gap-1">
         {coreWorkspaces.map((item) => (
