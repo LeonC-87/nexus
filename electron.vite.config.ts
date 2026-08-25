@@ -7,7 +7,10 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    // Sandboxed preload (sandbox: true) can't resolve externalized node_modules
+    // via require() at runtime - bundle @electron-toolkit/preload directly
+    // rather than leaving it as an external require.
+    plugins: [externalizeDepsPlugin({ exclude: ['@electron-toolkit/preload'] })]
   },
   renderer: {
     resolve: {

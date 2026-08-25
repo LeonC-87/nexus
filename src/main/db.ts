@@ -9,9 +9,61 @@ import { existsSync, mkdirSync } from 'fs'
 // docs/NAV_STRUCTURE.md and the Nexus Product Discovery notes on the
 // distributable-product requirement.
 
-const SCHEMA_VERSION = 1
+const SCHEMA_VERSION = 2
 
 let db: Database.Database | null = null
+
+function getSchemaVersion(database: Database.Database): number {
+  const row = database
+    .prepare('SELECT value FROM nexus_meta WHERE key = ?')
+    .get('schema_version') as { value: string } | undefined
+  return row ? Number(row.value) : 0
+}
+
+function setSchemaVersion(database: Database.Database, version: number): void {
+  database
+    .prepare(
+      'INSERT INTO nexus_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value'
+    )
+    .run('schema_version', String(version))
+}
+
+function migrate(database: Database.Database): void {
+  const current = getSchemaVersion(database)
+
+  if (current < 1) {
+    database
+      .prepare(
+        'INSERT INTO nexus_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value'
+      )
+      .run('app_version', app.getVersion())
+    setSchemaVersion(database, 1)
+  }
+
+  if (current < 2) {
+    // Nexus's own development roadmap - a Settings/Core concern (meta info about
+    // this installation's Nexus app itself), not a Personal/Projects module domain.
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS nexus_roadmap (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        version TEXT NOT NULL DEFAULT '',
+        title TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'planned',
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `)
+    setSchemaVersion(database, 2)
+  }
+
+  if (getSchemaVersion(database) !== SCHEMA_VERSION) {
+    throw new Error(
+      `Migration left schema at version ${getSchemaVersion(database)}, expected ${SCHEMA_VERSION}`
+    )
+  }
+}
 
 export function initDatabase(): Database.Database {
   if (db) return db
@@ -32,20 +84,7 @@ export function initDatabase(): Database.Database {
     )
   `)
 
-  const existing = db
-    .prepare('SELECT value FROM nexus_meta WHERE key = ?')
-    .get('schema_version') as { value: string } | undefined
-
-  if (!existing) {
-    db.prepare('INSERT INTO nexus_meta (key, value) VALUES (?, ?)').run(
-      'schema_version',
-      String(SCHEMA_VERSION)
-    )
-    db.prepare('INSERT INTO nexus_meta (key, value) VALUES (?, ?)').run(
-      'app_version',
-      app.getVersion()
-    )
-  }
+  migrate(db)
 
   return db
 }

@@ -2,6 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initDatabase } from './db'
+import {
+  listRoadmapItems,
+  createRoadmapItem,
+  updateRoadmapItem,
+  deleteRoadmapItem
+} from './roadmap'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -22,6 +28,9 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    if (is.dev) {
+      mainWindow.webContents.openDevTools({ mode: 'right' })
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -46,6 +55,12 @@ app.whenReady().then(() => {
   ipcMain.handle('nexus:get-app-version', () => app.getVersion())
 
   initDatabase()
+
+  ipcMain.handle('nexus:roadmap:list', () => listRoadmapItems())
+  ipcMain.handle('nexus:roadmap:create', (_event, input) => createRoadmapItem(input))
+  ipcMain.handle('nexus:roadmap:update', (_event, id, input) => updateRoadmapItem(id, input))
+  ipcMain.handle('nexus:roadmap:delete', (_event, id) => deleteRoadmapItem(id))
+
   createWindow()
 
   app.on('activate', function () {
