@@ -1,0 +1,52 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--nexus-canvas);
+  color: var(--nexus-text-primary);
+  font-family:
+    'Segoe UI',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--nexus-border-strong);
+  border-radius: var(--nexus-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nexus-emerald-dim);
+}
+
+:focus-visible {
+  outline: 2px solid var(--nexus-emerald);
+  outline-offset: 2px;
+}

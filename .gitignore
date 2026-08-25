@@ -1,0 +1,15 @@
+node_modules/
+out/
+release/
+dist/
+*.log
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+
+# Local Nexus app data (per-device, not synced - see docs/NAV_STRUCTURE.md)
+data/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm

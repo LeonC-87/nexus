@@ -1,0 +1,42 @@
+/* Nexus design tokens - dark charcoal canvas + emerald accent, glassmorphism.
+   Visual hierarchy (per Nexus Product Discovery, Stage: visual direction):
+   dark canvas -> structural surfaces -> glass elevated surfaces -> emerald
+   interaction/status accents -> stronger glow only for deliberate emphasis. */
+
+:root {
+  /* Canvas */
+  --nexus-canvas: #0a0d0c;
+  --nexus-surface-1: #101512;
+  --nexus-surface-2: #151b17;
+  --nexus-surface-3: #1a2119;
+
+  /* Glass */
+  --nexus-glass-bg: rgba(22, 30, 26, 0.55);
+  --nexus-glass-border: rgba(255, 255, 255, 0.06);
+  --nexus-glass-blur: 16px;
+
+  /* Emerald accent */
+  --nexus-emerald: #34d399;
+  --nexus-emerald-strong: #10b981;
+  --nexus-emerald-dim: #1f6b52;
+  --nexus-emerald-glow: rgba(52, 211, 153, 0.35);
+
+  /* Text */
+  --nexus-text-primary: #e8f3ee;
+  --nexus-text-secondary: #9db3ab;
+  --nexus-text-muted: #5f736c;
+
+  /* Borders */
+  --nexus-border: rgba(255, 255, 255, 0.08);
+  --nexus-border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Radii */
+  --nexus-radius-sm: 6px;
+  --nexus-radius-md: 10px;
+  --nexus-radius-lg: 16px;
+
+  /* Motion */
+  --nexus-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --nexus-duration-fast: 120ms;
+  --nexus-duration-base: 200ms;
+}
