@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import type { RoadmapItem, RoadmapItemInput } from '../shared/roadmap'
+import type { UpdateStatus } from '../shared/update'
 
 // Narrow, explicit bridge - the renderer never gets direct Node/filesystem/
 // database access. Every capability it needs is exposed here deliberately.
@@ -13,6 +14,10 @@ const nexusAPI = {
     update: (id: number, input: Partial<RoadmapItemInput>): Promise<RoadmapItem> =>
       ipcRenderer.invoke('nexus:roadmap:update', id, input),
     delete: (id: number): Promise<void> => ipcRenderer.invoke('nexus:roadmap:delete', id)
+  },
+  update: {
+    check: (): Promise<UpdateStatus> => ipcRenderer.invoke('nexus:update:check'),
+    apply: (): Promise<void> => ipcRenderer.invoke('nexus:update:apply')
   }
 }
 

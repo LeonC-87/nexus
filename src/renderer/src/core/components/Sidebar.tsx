@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { coreWorkspaces, modules } from '../nav'
+import type { UpdateStatus } from '../../../../shared/update'
 
 function NavRow({ label, path }: { label: string; path: string }): JSX.Element {
   return (
@@ -20,13 +21,27 @@ function NavRow({ label, path }: { label: string; path: string }): JSX.Element {
   )
 }
 
-export default function Sidebar(): JSX.Element {
+export default function Sidebar({
+  updateStatus
+}: {
+  updateStatus: UpdateStatus | null
+}): JSX.Element {
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-nexusBorder bg-surface1 px-3 py-4">
-      <div className="mb-6 flex items-center gap-2 px-2">
+      <div className="mb-1 flex items-center gap-2 px-2">
         <div className="h-2.5 w-2.5 rounded-full bg-emerald shadow-glow" />
         <span className="text-sm font-semibold tracking-wide text-text-primary">NEXUS</span>
       </div>
+
+      {updateStatus?.updateAvailable && (
+        <Link
+          to="/settings"
+          className="mb-5 px-2 text-xs text-emerald hover:underline"
+        >
+          Update available: v{updateStatus.latestVersion}
+        </Link>
+      )}
+      {!updateStatus?.updateAvailable && <div className="mb-6" />}
 
       <nav className="flex flex-col gap-1">
         {coreWorkspaces.map((item) => (

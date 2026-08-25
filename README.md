@@ -72,6 +72,21 @@ i.e. per-device, never synced/shared). Schema versioning is tracked from the fir
 exist yet - so future upgrades can migrate a real user's data instead of assuming a fresh
 install.
 
+## Update check
+
+On startup, Nexus compares its local `package.json` version against the version on the
+`main` branch of `LeonC-87/nexus` (via `gh api repos/LeonC-87/nexus/contents/package.json`).
+If newer, a badge appears under the Nexus logo in the sidebar and a card appears in
+Settings > General with an "Update" button.
+
+**This is a placeholder, not the real distributable updater.** It shells out to the `gh` CLI
+(already authenticated on this machine) rather than embedding any credential, and "updating"
+currently means `git pull && npm install` in the app's own directory followed by a relaunch —
+correct for the current git-clone-and-`npm run dev` stage, but it assumes a local git checkout
+and an authenticated `gh` CLI, both very much "this is Leon's machine" assumptions. **This must
+be replaced with a real electron-builder/electron-updater release-based flow before Nexus is
+ever given to another user** — see `src/main/update.ts` for the explicit note.
+
 ## Nav structure
 
 See `docs/NAV_STRUCTURE.md` for the fixed v0.1 navigation and the reasoning behind it.

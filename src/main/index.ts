@@ -8,6 +8,7 @@ import {
   updateRoadmapItem,
   deleteRoadmapItem
 } from './roadmap'
+import { checkForUpdate, applyUpdate } from './update'
 
 let mainWindowRef: BrowserWindow | null = null
 
@@ -81,6 +82,9 @@ if (gotSingleInstanceLock) {
     ipcMain.handle('nexus:roadmap:create', (_event, input) => createRoadmapItem(input))
     ipcMain.handle('nexus:roadmap:update', (_event, id, input) => updateRoadmapItem(id, input))
     ipcMain.handle('nexus:roadmap:delete', (_event, id) => deleteRoadmapItem(id))
+
+    ipcMain.handle('nexus:update:check', () => checkForUpdate())
+    ipcMain.handle('nexus:update:apply', () => applyUpdate())
 
     createWindow()
 
