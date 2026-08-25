@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, net } from 'electron'
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import type { UpdateStatus } from '../shared/update'
@@ -12,12 +12,11 @@ const execAsync = promisify(exec)
 // Nexus only exists as a git-cloned dev checkout, "update" genuinely means:
 // pull latest source, reinstall deps, relaunch.
 //
-// The version check shells out to the already-authenticated `gh` CLI rather
-// than extracting/embedding its stored token - Nexus never touches the
-// credential itself. This ties the check to gh being installed and signed
-// in, which is fine for Leon's own machines right now but is exactly the
-// kind of "assumes this is Leon's installation" shortcut that must NOT
-// survive into a real distributable version - see docs/NAV_STRUCTURE.md.
+// The version check is a plain unauthenticated request to raw.githubusercontent.com
+// - works for ANY user on ANY machine with no credentials, no gh CLI, no tie to
+// Leon's own GitHub login. This only works because LeonC-87/nexus is public
+// (made public 2026-08-25 specifically so this could work for other users, e.g.
+// Leon's partner running her own independent copy - see README.md "Scope note").
 
 function compareVersions(a: string, b: string): number {
   const pa = a.split('.').map(Number)
@@ -32,11 +31,14 @@ function compareVersions(a: string, b: string): number {
 }
 
 async function getRemoteVersion(): Promise<string> {
-  const { stdout } = await execAsync(
-    'gh api repos/LeonC-87/nexus/contents/package.json --jq .content'
+  const response = await net.fetch(
+    'https://raw.githubusercontent.com/LeonC-87/nexus/main/package.json',
+    { cache: 'no-store' }
   )
-  const decoded = Buffer.from(stdout.trim(), 'base64').toString('utf-8')
-  const pkg = JSON.parse(decoded) as { version: string }
+  if (!response.ok) {
+    throw new Error(`GitHub returned ${response.status} ${response.statusText}`)
+  }
+  const pkg = (await response.json()) as { version: string }
   return pkg.version
 }
 

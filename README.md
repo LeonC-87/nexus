@@ -85,18 +85,22 @@ thread as shelved, not adopted, unless Leon revives it explicitly.
 
 ## Update check
 
-On startup, Nexus compares its local `package.json` version against the version on the
-`main` branch of `LeonC-87/nexus` (via `gh api repos/LeonC-87/nexus/contents/package.json`).
-If newer, a badge appears under the Nexus logo in the sidebar and a card appears in
-Settings > General with an "Update" button.
+On startup, Nexus fetches `package.json` from `LeonC-87/nexus`'s `main` branch via a plain,
+unauthenticated request to `raw.githubusercontent.com` and compares its version against the
+local one. If newer, a badge appears under the Nexus logo in the sidebar and a card appears in
+Settings > General with an "Update" button; if up to date, the sidebar shows that instead. This
+works for **any** user on **any** machine — no GitHub login, no CLI, nothing tied to Leon's own
+account. That's specifically why `LeonC-87/nexus` was made public on 2026-08-25 (confirmed
+no secrets in the repo first) — it was previously private and the check shelled out to Leon's
+own authenticated `gh` CLI, which meant it silently failed on any machine that wasn't his own
+(e.g. the laptop, or a partner's machine).
 
-**This is a placeholder, not the real distributable updater.** It shells out to the `gh` CLI
-(already authenticated on this machine) rather than embedding any credential, and "updating"
-currently means `git pull && npm install` in the app's own directory followed by a relaunch —
-correct for the current git-clone-and-`npm run dev` stage, but it assumes a local git checkout
-and an authenticated `gh` CLI, both very much "this is Leon's machine" assumptions. **This must
-be replaced with a real electron-builder/electron-updater release-based flow before Nexus is
-ever given to another user** — see `src/main/update.ts` for the explicit note.
+**This is still a placeholder, not the real distributable updater.** "Updating" currently means
+`git pull && npm install` in the app's own directory followed by a relaunch — correct for the
+current git-clone-and-`npm run dev` stage (every user still needs git + Node installed locally
+to run Nexus at all), but it should be replaced with a real electron-builder/electron-updater
+release-based flow once Nexus is ever packaged as an installer — see `src/main/update.ts` for
+the explicit note.
 
 ## Nav structure
 
