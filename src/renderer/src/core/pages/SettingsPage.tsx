@@ -74,6 +74,14 @@ export default function SettingsPage({
                 </button>
               </div>
             )}
+            {updateStatus?.error && (
+              <div className="w-full max-w-md rounded-nlg border border-nexusBorder bg-surface1 px-5 py-4">
+                <p className="text-sm font-medium text-text-primary">
+                  Update check unavailable
+                </p>
+                <p className="mt-1 break-words text-xs text-text-muted">{updateStatus.error}</p>
+              </div>
+            )}
             <div className="max-w-md rounded-nlg border border-nexusBorder bg-glass p-8 text-center backdrop-blur-glass">
               <p className="text-sm leading-relaxed text-text-secondary">
                 {settingsDescription}

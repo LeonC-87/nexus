@@ -42,6 +42,14 @@ export default function Sidebar({
           <span className="text-xs text-text-muted">
             Up to date &middot; v{updateStatus.currentVersion}
           </span>
+        ) : updateStatus?.error ? (
+          <Link
+            to="/settings"
+            title={updateStatus.error}
+            className="text-xs text-text-muted opacity-60 hover:underline"
+          >
+            Update check unavailable
+          </Link>
         ) : (
           <span className="text-xs text-text-muted opacity-0">placeholder</span>
         )}
