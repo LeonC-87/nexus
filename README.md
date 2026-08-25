@@ -72,6 +72,17 @@ i.e. per-device, never synced/shared). Schema versioning is tracked from the fir
 exist yet - so future upgrades can migrate a real user's data instead of assuming a fresh
 install.
 
+## Scope note (2026-08-25)
+
+The ChatGPT discovery thread (`G:\My Drive\.Nexus\01_AI_TOOLS\`) has a long reconciliation
+about turning Nexus into a full cloud-backed product — signed installers, accounts, cross-device
+sync, a mobile companion app, freemium billing. **Leon explicitly stepped back from that same
+session: "forget all that."** The plan is to keep rebuilding Nexus locally, Command-Nexus-style,
+piece by piece. The one thing kept from that detour: other people (e.g. a partner) can already
+run their own fully independent copy today — clone the repo, `npm install`, run it — no
+accounts/cloud/sync needed for that. Treat the cloud/mobile/billing material in that ChatGPT
+thread as shelved, not adopted, unless Leon revives it explicitly.
+
 ## Update check
 
 On startup, Nexus compares its local `package.json` version against the version on the
