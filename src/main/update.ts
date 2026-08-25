@@ -47,18 +47,6 @@ async function getRemoteVersion(): Promise<string> {
   return pkg.version
 }
 
-async function getRemoteCommit(): Promise<string> {
-  const response = await net.fetch(
-    'https://api.github.com/repos/LeonC-87/nexus/commits/main',
-    { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } }
-  )
-  if (!response.ok) {
-    throw new Error(`GitHub returned ${response.status} ${response.statusText}`)
-  }
-  const data = (await response.json()) as { sha: string }
-  return data.sha
-}
-
 async function getLocalCommit(): Promise<string | null> {
   try {
     const { stdout } = await execAsync('git rev-parse HEAD', { cwd: app.getAppPath() })
@@ -69,24 +57,57 @@ async function getLocalCommit(): Promise<string | null> {
   }
 }
 
+// Uses GitHub's compare API rather than just "is the SHA different", because a
+// different SHA doesn't necessarily mean remote is AHEAD - it could mean local
+// has unpushed commits (very normal on Leon's own dev machines). ahead_by is
+// specifically "how many commits does main have that the local commit doesn't".
+async function getRemoteAheadInfo(
+  localCommit: string
+): Promise<{ latestCommit: string; aheadBy: number }> {
+  const response = await net.fetch(
+    `https://api.github.com/repos/LeonC-87/nexus/compare/${localCommit}...main`,
+    { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } }
+  )
+  if (!response.ok) {
+    throw new Error(`GitHub returned ${response.status} ${response.statusText}`)
+  }
+  const data = (await response.json()) as { ahead_by: number; commits: { sha: string }[] }
+  return {
+    latestCommit: data.commits.at(-1)?.sha ?? localCommit,
+    aheadBy: data.ahead_by
+  }
+}
+
 export async function checkForUpdate(): Promise<UpdateStatus> {
   const currentVersion = app.getVersion()
   try {
-    const [latestVersion, latestCommit, currentCommit] = await Promise.all([
-      getRemoteVersion(),
-      getRemoteCommit(),
-      getLocalCommit()
-    ])
+    const currentCommit = await getLocalCommit()
 
-    const versionAhead = compareVersions(latestVersion, currentVersion) > 0
-    const commitDiffers = currentCommit !== null && currentCommit !== latestCommit
+    if (currentCommit === null) {
+      // No local git checkout to compare against (e.g. a packaged build) -
+      // fall back to version-only comparison.
+      const latestVersion = await getRemoteVersion()
+      return {
+        currentVersion,
+        latestVersion,
+        currentCommit: null,
+        latestCommit: null,
+        updateAvailable: compareVersions(latestVersion, currentVersion) > 0,
+        checked: true
+      }
+    }
+
+    const [latestVersion, { latestCommit, aheadBy }] = await Promise.all([
+      getRemoteVersion(),
+      getRemoteAheadInfo(currentCommit)
+    ])
 
     return {
       currentVersion,
       latestVersion,
       currentCommit,
       latestCommit,
-      updateAvailable: versionAhead || commitDiffers,
+      updateAvailable: aheadBy > 0,
       checked: true
     }
   } catch (error) {
