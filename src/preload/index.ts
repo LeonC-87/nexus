@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import type { RoadmapItem, RoadmapItemInput } from '../shared/roadmap'
 import type { UpdateStatus } from '../shared/update'
+import type { Theme } from '../shared/theme'
 
 // Narrow, explicit bridge - the renderer never gets direct Node/filesystem/
 // database access. Every capability it needs is exposed here deliberately.
@@ -18,6 +19,10 @@ const nexusAPI = {
   update: {
     check: (): Promise<UpdateStatus> => ipcRenderer.invoke('nexus:update:check'),
     apply: (): Promise<void> => ipcRenderer.invoke('nexus:update:apply')
+  },
+  settings: {
+    getTheme: (): Promise<Theme> => ipcRenderer.invoke('nexus:settings:get-theme'),
+    setTheme: (theme: Theme): Promise<Theme> => ipcRenderer.invoke('nexus:settings:set-theme', theme)
   }
 }
 

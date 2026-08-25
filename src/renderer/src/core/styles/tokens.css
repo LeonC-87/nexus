@@ -40,3 +40,28 @@
   --nexus-duration-fast: 120ms;
   --nexus-duration-base: 200ms;
 }
+
+/* Light theme - same structure/emerald accent, inverted for a light canvas.
+   Applied via [data-theme="light"] on <html>, set from the persisted
+   Settings/General preference (see settings.ts / App.tsx). */
+[data-theme='light'] {
+  --nexus-canvas: #f4f6f5;
+  --nexus-surface-1: #ffffff;
+  --nexus-surface-2: #eef1ef;
+  --nexus-surface-3: #e4e9e6;
+
+  --nexus-glass-bg: rgba(255, 255, 255, 0.65);
+  --nexus-glass-border: rgba(0, 0, 0, 0.06);
+
+  --nexus-emerald: #0d9488;
+  --nexus-emerald-strong: #0f766e;
+  --nexus-emerald-dim: #99e6d4;
+  --nexus-emerald-glow: rgba(13, 148, 136, 0.25);
+
+  --nexus-text-primary: #10201a;
+  --nexus-text-secondary: #46564f;
+  --nexus-text-muted: #7c8b84;
+
+  --nexus-border: rgba(0, 0, 0, 0.08);
+  --nexus-border-strong: rgba(0, 0, 0, 0.14);
+}

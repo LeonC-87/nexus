@@ -2,6 +2,7 @@ import { useState } from 'react'
 import RoadmapView from '../components/RoadmapView'
 import { coreWorkspaces } from '../nav'
 import type { UpdateStatus } from '../../../../shared/update'
+import type { Theme } from '../../../../shared/theme'
 
 const settingsDescription = coreWorkspaces.find((w) => w.id === 'settings')!.description
 
@@ -13,9 +14,13 @@ const tabs: { id: SettingsTab; label: string }[] = [
 ]
 
 export default function SettingsPage({
-  updateStatus
+  updateStatus,
+  theme,
+  onThemeChange
 }: {
   updateStatus: UpdateStatus | null
+  theme: Theme
+  onThemeChange: (theme: Theme) => void
 }): JSX.Element {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [updating, setUpdating] = useState(false)
@@ -55,6 +60,28 @@ export default function SettingsPage({
       <div className="flex-1 overflow-y-auto">
         {activeTab === 'general' ? (
           <div className="flex h-full flex-col items-center justify-center gap-4 px-8">
+            <div className="flex w-full max-w-md items-center justify-between rounded-nlg border border-nexusBorder bg-surface1 px-5 py-4">
+              <div>
+                <p className="text-sm font-medium text-text-primary">Appearance</p>
+                <p className="text-xs text-text-muted">Light or dark canvas for the whole app</p>
+              </div>
+              <div className="flex gap-1 rounded-nsm border border-nexusBorder bg-surface2 p-1">
+                {(['dark', 'light'] as Theme[]).map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => onThemeChange(option)}
+                    className={[
+                      'rounded-nsm px-3 py-1 text-sm capitalize transition-colors duration-fast',
+                      theme === option
+                        ? 'bg-surface3 text-text-primary shadow-glowSoft'
+                        : 'text-text-secondary hover:text-text-primary'
+                    ].join(' ')}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
             {updateStatus?.updateAvailable && (
               <div className="flex w-full max-w-md items-center justify-between rounded-nlg border border-emerald-dim bg-surface1 px-5 py-4">
                 <div>

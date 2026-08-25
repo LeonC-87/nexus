@@ -9,6 +9,7 @@ import {
   deleteRoadmapItem
 } from './roadmap'
 import { checkForUpdate, applyUpdate } from './update'
+import { getTheme, setTheme } from './settings'
 
 let mainWindowRef: BrowserWindow | null = null
 
@@ -82,6 +83,9 @@ if (gotSingleInstanceLock) {
 
     ipcMain.handle('nexus:update:check', () => checkForUpdate())
     ipcMain.handle('nexus:update:apply', () => applyUpdate())
+
+    ipcMain.handle('nexus:settings:get-theme', () => getTheme())
+    ipcMain.handle('nexus:settings:set-theme', (_event, theme) => setTheme(theme))
 
     createWindow()
 
