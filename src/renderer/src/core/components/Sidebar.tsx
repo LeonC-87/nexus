@@ -35,6 +35,13 @@ function NavRow({
   )
 }
 
+function updateLabel(status: UpdateStatus): string {
+  if (status.latestVersion && status.latestVersion !== status.currentVersion) {
+    return `Update available: v${status.latestVersion}`
+  }
+  return 'Update available (new changes)'
+}
+
 export default function Sidebar({
   updateStatus,
   width,
@@ -81,7 +88,7 @@ export default function Sidebar({
         <div className="mb-5 flex justify-center px-2 text-center">
           {updateStatus?.updateAvailable ? (
             <Link to="/settings" className="text-xs text-emerald hover:underline">
-              Update available: v{updateStatus.latestVersion}
+              {updateLabel(updateStatus)}
             </Link>
           ) : updateStatus?.checked && !updateStatus.error ? (
             <span className="text-xs text-text-muted">

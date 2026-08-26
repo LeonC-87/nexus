@@ -86,10 +86,15 @@ export default function SettingsPage({
               <div className="flex w-full max-w-md items-center justify-between rounded-nlg border border-emerald-dim bg-surface1 px-5 py-4">
                 <div>
                   <p className="text-sm font-medium text-text-primary">
-                    Update to version {updateStatus.latestVersion}
+                    {updateStatus.latestVersion &&
+                    updateStatus.latestVersion !== updateStatus.currentVersion
+                      ? `Update to version ${updateStatus.latestVersion}`
+                      : 'Update available'}
                   </p>
                   <p className="text-xs text-text-muted">
                     Currently on v{updateStatus.currentVersion}
+                    {updateStatus.currentCommit &&
+                      ` (${updateStatus.currentCommit.slice(0, 7)})`}
                   </p>
                 </div>
                 <button
