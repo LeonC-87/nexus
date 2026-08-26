@@ -10,6 +10,30 @@ import {
 } from './roadmap'
 import { checkForUpdate, applyUpdate } from './update'
 import { getTheme, setTheme } from './settings'
+import {
+  createSession,
+  writeToSession,
+  resizeSession,
+  disposeSession,
+  disposeAllSessions,
+  popoutSession
+} from './terminal'
+import {
+  initBrowserTabs,
+  createTab,
+  closeTab,
+  closeAllTabs,
+  switchTab,
+  setActiveBounds,
+  hideActiveTab,
+  navigate,
+  goBack,
+  goForward,
+  reload,
+  listTabs,
+  popoutTab
+} from './browserTabs'
+import type { BrowserBounds } from '../shared/browser'
 
 let mainWindowRef: BrowserWindow | null = null
 
@@ -47,6 +71,7 @@ function createWindow(): void {
   })
 
   mainWindowRef = mainWindow
+  initBrowserTabs(mainWindow)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -87,6 +112,38 @@ if (gotSingleInstanceLock) {
     ipcMain.handle('nexus:settings:get-theme', () => getTheme())
     ipcMain.handle('nexus:settings:set-theme', (_event, theme) => setTheme(theme))
 
+    ipcMain.handle('nexus:terminal:create', (_event, cols: number, rows: number) =>
+      createSession(cols, rows)
+    )
+    ipcMain.on('nexus:terminal:write', (_event, id: string, data: string) =>
+      writeToSession(id, data)
+    )
+    ipcMain.on('nexus:terminal:resize', (_event, id: string, cols: number, rows: number) =>
+      resizeSession(id, cols, rows)
+    )
+    ipcMain.on('nexus:terminal:dispose', (_event, id: string) => disposeSession(id))
+    ipcMain.on('nexus:terminal:popout', (_event, id: string) => {
+      if (mainWindowRef) popoutSession(id, mainWindowRef)
+    })
+
+    ipcMain.handle('nexus:browser:create-tab', (_event, url?: string) => createTab(url))
+    ipcMain.handle('nexus:browser:close-tab', (_event, id: string) => closeTab(id))
+    ipcMain.handle('nexus:browser:close-all', () => closeAllTabs())
+    ipcMain.handle('nexus:browser:switch-tab', (_event, id: string, bounds: BrowserBounds) =>
+      switchTab(id, bounds)
+    )
+    ipcMain.on('nexus:browser:set-bounds', (_event, bounds: BrowserBounds) =>
+      setActiveBounds(bounds)
+    )
+    ipcMain.on('nexus:browser:hide', () => hideActiveTab())
+    ipcMain.on('nexus:browser:navigate', (_event, id: string, url: string) => navigate(id, url))
+    ipcMain.on('nexus:browser:go-back', (_event, id: string) => goBack(id))
+    ipcMain.on('nexus:browser:go-forward', (_event, id: string) => goForward(id))
+    ipcMain.on('nexus:browser:reload', (_event, id: string) => reload(id))
+    ipcMain.handle('nexus:browser:list-tabs', () => listTabs())
+    ipcMain.on('nexus:browser:open-external', (_event, url: string) => shell.openExternal(url))
+    ipcMain.on('nexus:browser:popout', (_event, id: string) => popoutTab(id))
+
     createWindow()
 
     app.on('activate', function () {
@@ -96,6 +153,8 @@ if (gotSingleInstanceLock) {
 }
 
 app.on('window-all-closed', () => {
+  disposeAllSessions()
+  closeAllTabs()
   if (process.platform !== 'darwin') {
     app.quit()
   }

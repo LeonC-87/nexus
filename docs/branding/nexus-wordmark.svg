@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="360" viewBox="0 0 1440 360">
+  <defs>
+    <linearGradient id="emerald" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8FFFE1"/>
+      <stop offset="18%" stop-color="#33F5B2"/>
+      <stop offset="55%" stop-color="#00C982"/>
+      <stop offset="100%" stop-color="#00895C"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-80%" width="220%" height="260%">
+      <feGaussianBlur stdDeviation="15" result="blur1"/>
+      <feFlood flood-color="#00E98C" flood-opacity="0.36" result="flood1"/>
+      <feComposite in="flood1" in2="blur1" operator="in" result="glow1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4.5" result="blur2"/>
+      <feFlood flood-color="#00FFC2" flood-opacity="0.55" result="flood2"/>
+      <feComposite in="flood2" in2="blur2" operator="in" result="glow2"/>
+      <feMerge>
+        <feMergeNode in="glow1"/>
+        <feMergeNode in="glow2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- soft outer aura -->
+  <g fill="none" stroke="#00E98C" stroke-width="25" stroke-linecap="square" stroke-linejoin="miter" opacity="0.16" filter="url(#glow)">
+    <path d="M85 275 V85 L275 275 V85"/>
+    <path d="M370 85 H565 M370 85 V275 M370 180 H545 M370 275 H565"/>
+    <path d="M655 85 L845 275 M845 85 L655 275"/>
+    <path d="M935 85 V215 Q935 275 995 275 H1055 Q1115 275 1115 215 V85"/>
+    <path d="M1325 95 H1210 Q1150 95 1150 145 Q1150 190 1208 190 H1272 Q1330 190 1330 235 Q1330 275 1274 275 H1150"/>
+  </g>
+
+  <!-- emerald glass body -->
+  <g fill="none" stroke="url(#emerald)" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M85 275 V85 L275 275 V85"/>
+    <path d="M370 85 H565 M370 85 V275 M370 180 H545 M370 275 H565"/>
+    <path d="M655 85 L845 275 M845 85 L655 275"/>
+    <path d="M935 85 V215 Q935 275 995 275 H1055 Q1115 275 1115 215 V85" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1325 95 H1210 Q1150 95 1150 145 Q1150 190 1208 190 H1272 Q1330 190 1330 235 Q1330 275 1274 275 H1150" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- dark translucent glass inset -->
+  <g fill="none" stroke="#062C22" stroke-opacity="0.80" stroke-width="11" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M85 275 V85 L275 275 V85"/>
+    <path d="M370 85 H565 M370 85 V275 M370 180 H545 M370 275 H565"/>
+    <path d="M655 85 L845 275 M845 85 L655 275"/>
+    <path d="M935 85 V215 Q935 275 995 275 H1055 Q1115 275 1115 215 V85" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1325 95 H1210 Q1150 95 1150 145 Q1150 190 1208 190 H1272 Q1330 190 1330 235 Q1330 275 1274 275 H1150" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- luminous inner edge -->
+  <g fill="none" stroke="#89FFE0" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" opacity="0.96">
+    <path d="M85 275 V85 L275 275 V85"/>
+    <path d="M370 85 H565 M370 85 V275 M370 180 H545 M370 275 H565"/>
+    <path d="M655 85 L845 275 M845 85 L655 275"/>
+    <path d="M935 85 V215 Q935 275 995 275 H1055 Q1115 275 1115 215 V85" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1325 95 H1210 Q1150 95 1150 145 Q1150 190 1208 190 H1272 Q1330 190 1330 235 Q1330 275 1274 275 H1150" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

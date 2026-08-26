@@ -31,19 +31,6 @@ export const coreWorkspaces: NavItem[] = [
       'Central entry and attention point for things arriving in Nexus or requiring review/routing.'
   },
   {
-    id: 'device',
-    label: 'Device',
-    path: '/device',
-    description:
-      'Workspace for understanding and controlling the device/environment on which Nexus is operating.'
-  },
-  {
-    id: 'security',
-    label: 'Security',
-    path: '/security',
-    description: 'Workspace for Nexus security, access, permissions and trust-related controls.'
-  },
-  {
     id: 'settings',
     label: 'Settings',
     path: '/settings',
@@ -64,5 +51,30 @@ export const modules: NavItem[] = [
     label: 'Projects',
     path: '/modules/projects',
     description: "Optional domain module for organising and understanding the user's projects."
+  },
+  {
+    id: 'device',
+    label: 'Device',
+    path: '/modules/device',
+    description:
+      'Workspace for understanding and controlling the device/environment on which Nexus is operating.'
+  },
+  {
+    id: 'security',
+    label: 'Security',
+    path: '/modules/security',
+    description: 'Workspace for Nexus security, access, permissions and trust-related controls.'
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    path: '/modules/email',
+    description: "Optional domain module for the user's email and messaging."
+  },
+  {
+    id: 'testing',
+    label: 'Testing',
+    path: '/modules/testing',
+    description: 'Workspace for testing and trying out in-progress Nexus features.'
   }
 ]
