@@ -34,9 +34,47 @@ npm install
 npm run dev
 ```
 
-`npm install` triggers a `postinstall` step (`electron-builder install-app-deps`) that rebuilds
-`better-sqlite3`'s native binding against Electron's ABI — required because it's a compiled
-module, not pure JS.
+`npm install` triggers a `postinstall` step (`patch-package && electron-builder install-app-deps`)
+that applies `patches/node-pty+*.patch` (see below) then rebuilds `better-sqlite3` and `node-pty`'s
+native bindings against Electron's ABI — required because both are compiled modules, not pure JS.
+
+### Windows: `node-pty` build fails with "GetCommitHash.bat is not recognized"
+
+`node-pty`'s bundled `winpty` submodule has a real bug on Windows: its own `winpty.gyp` invokes
+`cmd /c "cd shared && GetCommitHash.bat"`, and on at least this environment cmd fails to resolve
+the bare filename even though the file exists in that directory (`.\GetCommitHash.bat` or the
+full path both work fine — just not the bare name after `cd`). Already fixed via
+`patch-package` — `patches/node-pty+1.1.0.patch` is applied automatically on every
+`npm install`, no manual action needed. If `node-pty` ever gets upgraded to a new version, this
+patch will need regenerating (`npx patch-package node-pty` after re-applying the same two-line
+`.gyp` fix — see the patch file for exactly what changed).
+
+### Windows prerequisite: Python `distutils`
+
+Native module compilation (`node-gyp`) needs `distutils`, which was removed from the Python
+standard library in 3.12+. If `npm install` fails with `ModuleNotFoundError: No module named
+'distutils'`, run:
+
+```
+python -m pip install setuptools
+```
+
+first. (Hit and fixed on PC-MAIN 2026-08-25; likely to recur on the laptop's first clone if its
+Python is also 3.12+.)
+
+### `npm run dev` sometimes fails to open a window (no error shown)
+
+Seen 2026-08-26 on PC-MAIN after pulling `node-pty`/terminal-panel changes: `electron-vite dev`
+prints its normal success messages ("dev server running... start electron app...") but the
+Electron process exits immediately afterward with no visible error, and the app window never
+appears. **Confirmed the app itself is fine** — both `npm run dist` (the packaged installer) and
+running the production build directly (`npm run build` then
+`node_modules/electron/dist/electron.exe out/main/index.js`) work correctly. The bug is
+isolated to `electron-vite dev`'s process orchestration specifically (root cause not found -
+Vite reports its dev server as listening on 5173 but nothing is actually bound there when this
+happens). If `npm run dev` doesn't open a window within a few seconds: fall back to
+`npm run build && node_modules/electron/dist/electron.exe out/main/index.js` to keep working
+while this gets investigated properly.
 
 ### Windows prerequisite: Python `distutils`
 

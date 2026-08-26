@@ -6,7 +6,7 @@
   "author": "Leon Cogan",
   "main": "./out/main/index.js",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "patch-package && electron-builder install-app-deps",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
@@ -36,6 +36,7 @@
     "electron-builder": "^25.1.8",
     "electron-vite": "^2.3.0",
     "node-gyp": "^13.0.1",
+    "patch-package": "^8.0.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.7.2",
