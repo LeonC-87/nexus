@@ -102,6 +102,37 @@ to run Nexus at all), but it should be replaced with a real electron-builder/ele
 release-based flow once Nexus is ever packaged as an installer — see `src/main/update.ts` for
 the explicit note.
 
+## Building a Windows installer
+
+```
+npm run dist
+```
+
+Produces a real NSIS installer at `release/Nexus-<version>-setup.exe` — installs to
+`AppData\Local\Programs\Nexus`, adds a Start Menu shortcut, and registers a proper uninstaller
+in Windows' Add/Remove Programs. Verified working end-to-end 2026-08-26 (full install → launch
+→ confirmed running as `Nexus.exe`, not a dev process → uninstall entry present).
+
+**One-time prerequisite:** electron-builder needs to extract its bundled signing tools, which
+requires symlink creation privileges. If `npm run dist` hangs retrying a `winCodeSign` download
+with "Cannot create symbolic link: A required privilege is not held by the client", enable
+Windows Developer Mode once (Settings → Privacy & Security → For developers), or run the build
+from an elevated terminal. See `docs/environment/enable-dev-mode-elevated.ps1`.
+
+**Known gap in this installer:** it's currently **unsigned** (no code-signing certificate) —
+Windows SmartScreen will likely warn on first run from another machine ("Windows protected your
+PC" → "More info" → "Run anyway" to proceed). Also uses the default Electron icon, not a Nexus
+one. Both cosmetic/trust issues, not functional ones — fine for personal/testing use, would need
+fixing before handing this installer to someone else as "official."
+
+**Update mechanism doesn't work from an installed build yet.** The update *check* works fine
+(plain network request, confirmed showing "Up to date" correctly from the installed `Nexus.exe`)
+— but clicking "Update" runs `git pull` against `app.getAppPath()`, which inside a packaged app
+points at the bundled `resources/app.asar`, not a git checkout. It'll just fail. The update
+*check* is genuinely useful as-is; the *apply* step still only works when running via
+`npm run dev` from a real git clone. Real update-apply for an installed build needs
+`electron-updater` wired to actual GitHub Releases — not built yet.
+
 ## Nav structure
 
 See `docs/NAV_STRUCTURE.md` for the fixed v0.1 navigation and the reasoning behind it.

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "Nexus - personal control centre",
+  "author": "Leon Cogan",
   "main": "./out/main/index.js",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",

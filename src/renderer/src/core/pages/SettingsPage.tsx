@@ -24,12 +24,19 @@ export default function SettingsPage({
 }): JSX.Element {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [updating, setUpdating] = useState(false)
+  const [applyError, setApplyError] = useState<string | null>(null)
 
   async function handleUpdate(): Promise<void> {
     setUpdating(true)
+    setApplyError(null)
     try {
       await window.nexus.update.apply()
       // App relaunches itself on success - if we're still here, it failed.
+    } catch (error) {
+      // Expected to fail on an installed build - apply currently only works
+      // running via `npm run dev` from a real git checkout (git pull has
+      // nothing to pull inside a packaged app.asar). See README.md.
+      setApplyError(error instanceof Error ? error.message : String(error))
     } finally {
       setUpdating(false)
     }
@@ -104,6 +111,12 @@ export default function SettingsPage({
                 >
                   {updating ? 'Updating…' : 'Update'}
                 </button>
+              </div>
+            )}
+            {applyError && (
+              <div className="w-full max-w-md rounded-nlg border border-nexusBorder bg-surface1 px-5 py-4">
+                <p className="text-sm font-medium text-text-primary">Update failed</p>
+                <p className="mt-1 break-words text-xs text-text-muted">{applyError}</p>
               </div>
             )}
             {updateStatus?.error && (
